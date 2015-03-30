@@ -1,0 +1,5 @@
+主程式
+C:\Program Files (x86)\Adobe\Adobe InDesign CS6\Scripts\Scripts Panel
+
+指令碼
+C:\Users\e00277\AppData\Roaming\Adobe\InDesign\Version 8.0-J\zh_TW\Scripts\Scripts Panel
