@@ -4,11 +4,11 @@
 #target indesign;
 #targetengine "session";
 
-//公開元件
+//Elément de publication
 var jobsList; //ListBox
 var grepList;
 var scriptsList;
-var msgText;//訊息窗
+var msgText;//fenêtre de message
 
 var grepFiles = getGrepFiles();//get grep files
 var scriptFiles = getScriptFiles();//get script files
@@ -17,7 +17,7 @@ showWindow();
 //============================= showWindow; ============================================
 function showWindow()
 {
-    var win = new Window("palette","批次工作清單",undefined,{resizeable:false});
+    var win = new Window("palette","Batch Liste de travail",undefined,{resizeable:false});
     //var rootPanel = win.add("panel");
     
     // top group
@@ -25,7 +25,8 @@ function showWindow()
     // GREP  Panel
     var panelGreps = groupUp.add("panel");    
     var grepLabel = panelGreps.add("statictext");
-    grepLabel.text = "GREP清單";
+    grepLabel.text = "liste GREP";
+	grepLabel.helpTip = "Clic-droit pour ajouter";
     grepList = panelGreps.add("listbox");
     grepList.size = {width:200,height:500};
     if(grepFiles!=null){
@@ -37,7 +38,8 @@ function showWindow()
     // Scripts Panel
     var panelScripts = groupUp.add("panel");
     var scriptsLabel = panelScripts.add("statictext");
-    scriptsLabel.text = "指令碼清單";
+    scriptsLabel.text = "Liste Script";
+	scriptsLabel.helpTip = "Clic-droit pour ajouter";
     scriptsList = panelScripts.add("listbox");
     scriptsList.size = {width:200,height:500};
     if(scriptFiles!=null){
@@ -48,35 +50,36 @@ function showWindow()
     }
     var panelJobs = groupUp.add("panel");
     var jobsLabel = panelJobs.add("statictext");
-    jobsLabel.text = "工作佇列";
+    jobsLabel.text = "Vos files d'attente";
+	jobsLabel.helpTip = "SUPPR pour supprimer de la liste";
     jobsList = panelJobs.add("listbox",undefined,undefined,{multiselect:false});
     jobsList.size = {width:200,height:400};
     jobsList.addEventListener ("keydown", function(kd){pressed(kd);});    
 
     // jobs button group 1
     var buttonGroup1 = panelJobs.add("group");
-    var moveUpButton = buttonGroup1.add("button",undefined,"上移");// job move up
-    moveUpButton.onClick = function(){moveItemUp(jobsList);};//上移按鈕事件
-    var moveDownButton = buttonGroup1.add("button",undefined,"下移");//job move down
-    moveDownButton.onClick = function(){moveItemDown(jobsList);};//下移按鈕事件
+    var moveUpButton = buttonGroup1.add("button",undefined,"Monter");// job move up
+    moveUpButton.onClick = function(){moveItemUp(jobsList);};//Déplacer des événements de bouton
+    var moveDownButton = buttonGroup1.add("button",undefined,"Descendre");//job move down
+    moveDownButton.onClick = function(){moveItemDown(jobsList);};//en bas événement Bouton
     // jobs button group 2
     var buttonGroup2 = panelJobs.add("group");
-    var exportButton = buttonGroup2.add("button",undefined,"匯出清單");
-    exportButton.onClick = function(){exportJobsList();};//匯出清單
-    var importButton = buttonGroup2.add("button",undefined,"匯入清單");
-    importButton.onClick = function(){importJobsList();};//匯出清單
+    var exportButton = buttonGroup2.add("button",undefined,"Exporter la liste");
+    exportButton.onClick = function(){exportJobsList();};//Exporter Annonce
+    var importButton = buttonGroup2.add("button",undefined,"Importer une liste");
+    importButton.onClick = function(){importJobsList();};//Exporter Annonce
     
     // jobs button group 3
     var buttonGroup3 = panelJobs.add("group");
-    var runButton = buttonGroup3.add("button",undefined,"執行清單");
-    runButton.onClick = function(){runJobsList();};//匯出清單
+    var runButton = buttonGroup3.add("button",undefined,"Exécuter la liste");
+    runButton.onClick = function(){runJobsList();};//Exporter Annonce
     
     // DOWN GROUP
-    //訊息視窗
+    //fenêtre de message
     var groupDown = win.add("group");
     msgText = groupDown.add("edittext",[0,0,700,100],"",{multiline:true});
     
-    win.addEventListener ("keydown", function(kd){pressed(kd);});//視窗按DEL直接代表要刪除JobsList裡的項目
+    win.addEventListener ("keydown", function(kd){pressed(kd);});//Fenêtres Appuyez sur DEL pour supprimer JobsList directement représenté dans le projet
     win.show();
 }
 
@@ -98,10 +101,10 @@ function getGrepFiles()
     var queryFolder = app.scriptPreferences.scriptsFolder.parent.parent + "/Find-Change Queries/Grep/";
     //alert(queryFolder);
     var grepFolder = new Folder(queryFolder);
-    var grepFilesCollect = new Array();//GREP的檔案集合
-    //副檔名必須是xml
+    var grepFilesCollect = new Array();//Archives de la collection de GREP
+    //Extension de fichier XML doit être
     if(grepFolder.exists){
-        var filesCollect = grepFolder.getFiles();//所有未過濾的檔案
+        var filesCollect = grepFolder.getFiles();//Toutes les archives non filtrée
         var iCount = 0;
         for(var v1=0;v1<filesCollect.length;v1++){
             var ext = getExtFileName(filesCollect[v1].name);
@@ -122,10 +125,10 @@ function getScriptFiles()
 {
     var queryFolder = app.scriptPreferences.scriptsFolder;
     var scriptFolder = new Folder(queryFolder);
-    var scriptFilesCollect = new Array();//Script的檔案集合
-    //副檔名必須是 jsx或jsxbin
+    var scriptFilesCollect = new Array();//Collection de fichiers de script
+    //File extension doit être jsx ou jsxbin
     if(scriptFolder.exists){
-        var filesCollect = scriptFolder.getFiles();//所有未過濾的檔案
+        var filesCollect = scriptFolder.getFiles();//Toutes les archives non filtrée
         var iCount = 0;
         for(var v1=0;v1<filesCollect.length;v1++){
             var ext = getExtFileName(filesCollect[v1].name);
@@ -166,8 +169,8 @@ function pressed(k)
                 //alert("selection null");
             }else{
                 try{
-                    var mySelection = jobsList.selection;//選取的項目
-                    jobsList.remove(mySelection);//移除項目
+                    var mySelection = jobsList.selection;//Les projets sélectionnés
+                    jobsList.remove(mySelection);//Supprimer des éléments
                 }catch(e){
                     alert(e.message);
                 }
@@ -178,7 +181,7 @@ function pressed(k)
     }
 }
 
-//上移項目
+//projet déménagement
 function moveItemUp(nowListBox)
 {
     if(nowListBox.selection!=null && nowListBox.selection.index>0)
@@ -189,7 +192,7 @@ function moveItemUp(nowListBox)
     }
 }
 
-//下移項目
+//en bas projet
 function moveItemDown(nowListBox)
 {
     if(nowListBox.selection!=null && nowListBox.selection.index<nowListBox.items.length-1)
@@ -203,7 +206,7 @@ function moveItemDown(nowListBox)
 //export jobs list
 function exportJobsList()
 {
-    var saveFile = File.saveDialog (" 儲存檔案", "*.job");
+    var saveFile = File.saveDialog (" Enregistrer le fichier", "*.job");
     saveFile.encoding = "UTF-8";
     saveFile.open("w");
     for(var i=0;i<jobsList.items.length;i++){
@@ -215,7 +218,7 @@ function exportJobsList()
 //import jobs list
 function importJobsList()
 {
-    var openFile = new File(File.openDialog("匯入清單", "*.job", "false"));
+    var openFile = new File(File.openDialog("liste d'importation", "*.job", "false"));
     var filesArray = new Array();
     var iCount = 0;
     if(openFile.open("r")==true){
@@ -243,15 +246,15 @@ function swap(x,y)
 
 function runJobsList()
 {
-    // 清單空白不做
+    // Pas de liste vide
     if(jobsList.items.length<=0){
         return null;
     }
-    var jobs = jobsList.items;//收集所有工作
-    //判斷是GREP還是SCRIPT
+    var jobs = jobsList.items;//Recueillir tout le travail
+    //GREP juge ou un script
     for(var i=0;i<jobs.length;i++){
         var ary = jobs[i].text.split (".");
-        var extFileName = ary[ary.length-1];//最後一個是副檔名
+        var extFileName = ary[ary.length-1];//Le dernier est l'extension de fichier
         switch(extFileName){
             case "xml":
                 msgText.text += "[GREP]" + jobs[i].text + "\r\n";
@@ -266,7 +269,7 @@ function runJobsList()
                 runScript(jobs[i].text);//RUN BIN SCRIPT
             break;
             default:
-                msgText.text += "===[undefined]: " + jobs[i].text + " 不是合法檔案! ===\r\n";
+                msgText.text += "===[undefined]: " + jobs[i].text + " n'est pas un fichier valide ! ===\r\n";
         }
     }
 }
@@ -279,8 +282,8 @@ function runGrep(fileName)
     var queryFolder = app.scriptPreferences.scriptsFolder.parent.parent + "/Find-Change Queries/Grep/";
     var grepFile = new File(queryFolder + fileName);
     if(grepFile.exists==false){
-        //檔案不存在
-        msgText.text += fileName + " 不存在! \r\n";
+        //File does not exist
+        msgText.text += fileName + " n'existe pas ! \r\n";
         return null;
     }
     var inDoc = app.activeDocument;
@@ -294,8 +297,8 @@ function runGrep(fileName)
 function runScript(fileName){
     var scriptFile = new File(app.scriptPreferences.scriptsFolder+"/"+fileName);
     if(scriptFile.exists==false){
-        //檔案不存在
-        msgText.text += fileName + " 不存在! \r\n";
+        //File does not exist
+        msgText.text += fileName + " n'existe pas ! \r\n";
         return null;
     }
     var result = app.doScript(scriptFile);
@@ -306,8 +309,8 @@ function runScript(fileName){
 //~ function runBinScript(fileName){
 //~     var scriptFile = new File(app.scriptPreferences.scriptsFolder+"/"+fileName);
 //~     if(scriptFile.exists==false){
-//~         //檔案不存在
-//~         msgText.text += fileName + " 不存在! \r\n";
+//~         //File does not exist
+//~         msgText.text += fileName + " n'existe pas ! \r\n";
 //~         return null;
 //~     }
 //~     var result = app.doScript(scriptFile);
@@ -322,10 +325,10 @@ function progressBarMake(parentWin,stop){
     return pbar;
 }
 
-//取得副檔名
+//Obtenir l'extension de fichier
 function getExtFileName(fileName)
 {
     var splitAry = fileName.split(".");
-    var extName = splitAry[splitAry.length-1];//最後一個必須是副檔名
+    var extName = splitAry[splitAry.length-1];//La dernière extension de fichier doit être
     return extName;
 }
